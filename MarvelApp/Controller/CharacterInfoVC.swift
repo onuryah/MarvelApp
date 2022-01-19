@@ -37,18 +37,21 @@ class CharacterInfoVC: UIViewController {
 
 extension CharacterInfoVC: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let comics = self.selectedChar?.comics.items else{return 0}
-        return comics.count
+        return self.fetchedComics.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = selectedCharComicsTableView.dequeueReusableCell(withIdentifier: "comicsCell", for: indexPath) as! ComicsCell
-        let comicName = self.selectedChar?.comics.items[indexPath.row].name
+        let comicName = self.fetchedComics[indexPath.row].title
 //        if let comicImageStr = self.selectedChar?.comics.collectionURI{
 //            print(comicImageStr)
 //        }
         cell.comicNameLabelField.text = comicName
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print(self.fetchedComics[indexPath.row].dates[0].date)
     }
     
     fileprivate func setDelegates(){
@@ -90,7 +93,6 @@ extension CharacterInfoVC: UITableViewDelegate, UITableViewDataSource{
         let hash = "&hash="+MD5(data: "\(ts)\(Keys().privateKey)\(Keys().publicKey)")
         guard let charId = selectedChar?.id else {return}
         let totalUrl = ComicsUrlClass().baseUrl+"\(charId)"+ComicsUrlClass().type+"&ts="+ts+ComicsUrlClass().apiKey+hash
-        print(totalUrl)
         
         guard let url = URL(string: totalUrl)else{return}
         
@@ -105,7 +107,34 @@ extension CharacterInfoVC: UITableViewDelegate, UITableViewDataSource{
                   let characters = try JSONDecoder().decode(ComicModel.self, from: data)
                   if self.fetchedComics.count == 0 {
                         self.fetchedComics = characters.data.results
-                      print("kontrol: \(self.fetchedComics)")
+                      var number = -1
+                      for result in self.fetchedComics {
+                          let dates = result.dates
+                          
+                          number = number + 1
+                          
+                          let specificDate = dates[0].date
+                          
+                          let formatter = DateFormatter()
+                          formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+                          if let someDateTime = formatter.date(from: "\(specificDate)"){
+                              let desiredDateStr = "2006-01-01T00:00:00-0000"
+                              if let desiredDate = formatter.date(from: desiredDateStr){
+                                  if someDateTime < desiredDate{
+                                      self.fetchedComics.remove(at: number)
+                                      number = number - 1
+                                  }
+                              }
+                                  
+                          }
+                          
+                      }
+                      number = 0
+                      
+                      
+                      DispatchQueue.main.async {
+                          self.selectedCharComicsTableView.reloadData()
+                      }
                   }
                     
                 }catch{
