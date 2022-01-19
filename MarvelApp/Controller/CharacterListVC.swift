@@ -32,9 +32,14 @@ extension CharacterListVC : UITableViewDelegate, UITableViewDataSource{
         let thm = self.fetchedCharacters[indexPath.row].thumbnail.path
         let ex = self.fetchedCharacters[indexPath.row].thumbnail.thumbnailExtension
         let thmex = thm+"."+ex
-        print("kontrol: \(thmex)")
-        cell.characterImageView.sd_setImage(with: URL(string: fetchedCharacters[indexPath.row].thumbnail.path))
+        cell.characterImageView.sd_setImage(with: URL(string: thmex))
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedCharacter = fetchedCharacters[indexPath.row]
+        Singleton.chosenCharacter = selectedCharacter
+        performSegue(withIdentifier: "details", sender: nil)
     }
     
     fileprivate func setDelegates() {
@@ -52,11 +57,9 @@ extension CharacterListVC : UITableViewDelegate, UITableViewDataSource{
     }
     
     fileprivate func fetchDatas(){
-    
-        
         let ts = Keys().time
         let hash = "&hash="+MD5(data: "\(ts)\(Keys().privateKey)\(Keys().publicKey)")
-        let totalUrl = UrlClass().baseUrl+"limit=5"+"&ts="+ts+UrlClass().apiKey+hash
+        let totalUrl = CharactersUrlClass().baseUrl+"&ts="+ts+CharactersUrlClass().apiKey+hash
         guard let url = URL(string: totalUrl)else{return}
         
         let session = URLSession(configuration: .default)
@@ -86,6 +89,7 @@ extension CharacterListVC : UITableViewDelegate, UITableViewDataSource{
         
         
     }
+    
     
     
     

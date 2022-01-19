@@ -1,15 +1,14 @@
 //
-//  CharacterCell.swift
+//  ComicsCell.swift
 //  MarvelApp
 //
-//  Created by Ceren Çapar on 18.01.2022.
+//  Created by Ceren Çapar on 19.01.2022.
 //
 
 import UIKit
 
-class CharacterCell: UITableViewCell {
-    @IBOutlet weak var characterNameLabelField: UILabel!
-    @IBOutlet weak var characterImageView: UIImageView!
+class ComicsCell: UITableViewCell {
+    @IBOutlet weak var comicNameLabelField: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -23,8 +22,8 @@ class CharacterCell: UITableViewCell {
     }
     
     fileprivate func extractedFunc() {
-        characterNameLabelField.lineBreakMode = .byWordWrapping
-        characterNameLabelField.numberOfLines = 0
+        comicNameLabelField.lineBreakMode = .byWordWrapping
+        comicNameLabelField.numberOfLines = 0
     }
 
 }

@@ -19,6 +19,7 @@ struct Character : Codable {
     let id : Int
     let name : String
     let description : String
+    let comics: Comics
     let thumbnail : Thumbnail
     let urls : [URLElement]
 }
@@ -30,6 +31,16 @@ struct Thumbnail: Codable {
         case path
         case thumbnailExtension = "extension"
     }
+}
+
+struct Comics: Codable {
+    let available: Int
+    let collectionURI: String
+    let items: [ComicsItem]
+}
+
+struct ComicsItem: Codable {
+    let resourceURI, name: String
 }
 
 

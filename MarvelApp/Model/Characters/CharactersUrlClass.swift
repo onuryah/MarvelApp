@@ -7,9 +7,8 @@
 
 import Foundation
 
-struct UrlClass {
+struct CharactersUrlClass {
     let baseUrl = "https://gateway.marvel.com:443/v1/public/characters?"
     let apiKey = "&apikey="+Keys().publicKey
     let hash = "&hash="
-
 }
