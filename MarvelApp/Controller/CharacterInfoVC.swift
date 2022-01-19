@@ -37,15 +37,21 @@ class CharacterInfoVC: UIViewController {
 
 extension CharacterInfoVC: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.fetchedComics.count
+        let comicsCount = self.fetchedComics.count
+        if comicsCount <= 10 {
+            return comicsCount
+        }else {
+            let extra = comicsCount - 10
+            for _ in 1...extra{
+                self.fetchedComics.removeLast()
+            }
+            return self.fetchedComics.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = selectedCharComicsTableView.dequeueReusableCell(withIdentifier: "comicsCell", for: indexPath) as! ComicsCell
         let comicName = self.fetchedComics[indexPath.row].title
-//        if let comicImageStr = self.selectedChar?.comics.collectionURI{
-//            print(comicImageStr)
-//        }
         cell.comicNameLabelField.text = comicName
         return cell
     }

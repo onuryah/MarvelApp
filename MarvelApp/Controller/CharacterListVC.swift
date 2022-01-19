@@ -59,7 +59,7 @@ extension CharacterListVC : UITableViewDelegate, UITableViewDataSource{
     fileprivate func fetchDatas(){
         let ts = Keys().time
         let hash = "&hash="+MD5(data: "\(ts)\(Keys().privateKey)\(Keys().publicKey)")
-        let totalUrl = CharactersUrlClass().baseUrl+"&ts="+ts+CharactersUrlClass().apiKey+hash
+        let totalUrl = CharactersUrlClass().baseUrl+"limit=30"+"&ts="+ts+CharactersUrlClass().apiKey+hash
         guard let url = URL(string: totalUrl)else{return}
         
         let session = URLSession(configuration: .default)
