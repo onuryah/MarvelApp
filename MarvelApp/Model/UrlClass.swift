@@ -6,3 +6,10 @@
 //
 
 import Foundation
+
+struct UrlClass {
+    let baseUrl = "https://gateway.marvel.com:443/v1/public/characters?"
+    let apiKey = "&apikey="+Keys().publicKey
+    let hash = "&hash="
+
+}
