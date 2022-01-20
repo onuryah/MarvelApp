@@ -12,16 +12,19 @@ import SDWebImage
 class CharacterListVC: UIViewController {
     @IBOutlet weak var characterTableView: UITableView!
     var fetchedCharacters = [Character]()
+    var offSetNumber = 0
+    var indexObserver = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setDelegates()
         fetchDatas()
+        ahaha()
     }
 
 
 }
-extension CharacterListVC : UITableViewDelegate, UITableViewDataSource{
+extension CharacterListVC : UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.fetchedCharacters.count
     }
@@ -33,6 +36,13 @@ extension CharacterListVC : UITableViewDelegate, UITableViewDataSource{
         let ex = self.fetchedCharacters[indexPath.row].thumbnail.thumbnailExtension
         let thmex = thm+"."+ex
         cell.characterImageView.sd_setImage(with: URL(string: thmex))
+        self.indexObserver = indexPath.row
+        
+        if self.indexObserver == self.fetchedCharacters.count - 5 {
+            offSetNumber = offSetNumber + 1
+            fetchDatas()
+        }
+        
         return cell
     }
     
@@ -59,7 +69,7 @@ extension CharacterListVC : UITableViewDelegate, UITableViewDataSource{
     fileprivate func fetchDatas(){
         let ts = Keys().time
         let hash = "&hash="+MD5(data: "\(ts)\(Keys().privateKey)\(Keys().publicKey)")
-        let totalUrl = CharactersUrlClass().baseUrl+"limit=30"+"&ts="+ts+CharactersUrlClass().apiKey+hash
+        let totalUrl = CharactersUrlClass().baseUrl+"limit=30&offset="+"\(30 * offSetNumber)"+"&ts="+ts+CharactersUrlClass().apiKey+hash
         guard let url = URL(string: totalUrl)else{return}
         
         let session = URLSession(configuration: .default)
@@ -71,13 +81,23 @@ extension CharacterListVC : UITableViewDelegate, UITableViewDataSource{
                 guard let data = data else {return}
               do{
                   let characters = try JSONDecoder().decode(JsonResults.self, from: data)
+                  let desiredCharacters = characters.data.results
                   if self.fetchedCharacters.count == 0 {
-                        self.fetchedCharacters = characters.data.results
+                        self.fetchedCharacters = desiredCharacters
                         DispatchQueue.main.async {
                             self.characterTableView.reloadData()
                         }
                         
-                    }
+                  } else{
+                      DispatchQueue.main.async {
+                          desiredCharacters.forEach { char in
+                              self.fetchedCharacters.append(char)
+                              self.characterTableView.reloadData()
+                          }
+                      }
+                      
+                      
+                  }
                     
                 }catch{
                     print(error.localizedDescription)
@@ -88,6 +108,12 @@ extension CharacterListVC : UITableViewDelegate, UITableViewDataSource{
         .resume()
         
         
+    }
+    
+    
+    func ahaha(){
+        print("kontrol : \(self.indexObserver)")
+
     }
     
     
