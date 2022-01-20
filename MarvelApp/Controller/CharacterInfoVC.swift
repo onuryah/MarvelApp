@@ -8,6 +8,7 @@
 import UIKit
 import SDWebImage
 import CryptoKit
+import CoreData
 
 class CharacterInfoVC: UIViewController {
     @IBOutlet weak var selectedCharNameLabelField: UILabel!
@@ -23,6 +24,7 @@ class CharacterInfoVC: UIViewController {
         setDelegates()
         fetchData()
         backButtonAdded()
+        addButtonAdded()
     }
     fileprivate func backButtonAdded() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "< Cancel", style: UIBarButtonItem.Style.plain, target: self, action: #selector(goBack))
@@ -153,5 +155,33 @@ extension CharacterInfoVC: UITableViewDelegate, UITableViewDataSource{
         
         
     }
+    
+    fileprivate func addButtonAdded(){
+        navigationController?.navigationBar.topItem?.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.add, target: self, action: #selector(addButtonClicked))
+    }
+    
+    @objc func addButtonClicked() {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+        
+        let newPainting = NSEntityDescription.insertNewObject(forEntityName: "Entity", into: context)
+        
+        //Attributes
+        if let charName = self.selectedChar?.name{
+            newPainting.setValue(charName, forKey: "charName")
+        }
+        
+        do {
+            try context.save()
+            print("success")
+        } catch {
+            print("error")
+        }
+        NotificationCenter.default.post(name: NSNotification.Name("newData"), object: nil)
+        self.dismiss(animated: true, completion: nil)
+    
+    }
+    
+    
     
 }

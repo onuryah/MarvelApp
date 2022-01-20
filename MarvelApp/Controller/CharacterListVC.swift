@@ -8,6 +8,7 @@
 import UIKit
 import CryptoKit
 import SDWebImage
+import CoreData
 
 class CharacterListVC: UIViewController {
     @IBOutlet weak var characterTableView: UITableView!
@@ -19,7 +20,9 @@ class CharacterListVC: UIViewController {
         super.viewDidLoad()
         setDelegates()
         fetchDatas()
-        ahaha()
+        favoritesButtonAdded()
+
+
     }
 
 
@@ -110,11 +113,22 @@ extension CharacterListVC : UITableViewDelegate, UITableViewDataSource, UIScroll
         
     }
     
-    
-    func ahaha(){
-        print("kontrol : \(self.indexObserver)")
-
+    fileprivate func favoritesButtonAdded() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Favorites >", style: UIBarButtonItem.Style.plain, target: self, action: #selector(favoritesButtonClicked))
     }
+    @objc func favoritesButtonClicked(){
+        performSegue(withIdentifier: "toSaveVC", sender: nil)
+        
+        
+        
+        
+    }
+    
+    
+
+    
+    
+
     
     
     
