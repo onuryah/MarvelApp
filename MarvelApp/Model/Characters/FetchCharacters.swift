@@ -25,26 +25,16 @@ class FetchCharacters{
               do{
                   let characters = try JSONDecoder().decode(JsonResults.self, from: data)
                   let desiredCharacters = characters.data.results
-                  if array.count == 0 {
+                  
                       self.jsonArray = desiredCharacters
-                      completion(self.jsonArray)
                         DispatchQueue.main.async {
+                            completion(self.jsonArray)
                             tableView.reloadData()
                         }
-                        
-                  } else{
-                      DispatchQueue.main.async {
-                          desiredCharacters.forEach { char in
-                              self.jsonArray.append(char)
-                              tableView.reloadData()
-                              completion(self.jsonArray)
-                          }
-                      }
-                  }
+
+                  
                     
-                }catch{
-                    print(error.localizedDescription)
-                }
+              }catch{}
             }
         }
         .resume()

@@ -10,34 +10,27 @@ import SDWebImage
 import CoreData
 
 class CharacterInfoVC: UIViewController {
-    @IBOutlet weak var selectedCharNameLabelField: UILabel!
     @IBOutlet weak var selectedCharImageView: UIImageView!
     @IBOutlet weak var selectedCharComicsTableView: UITableView!
     @IBOutlet weak var selectedCharDescriptionLabelField: UILabel!
-    var selectedChar : Character?
-    var fetchedComics = [Result]()
+    private var selectedChar : Character?
+    private var fetchedComics = [Result]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         synchronizeChosenChar()
         setDelegates()
-        FetchComics().fetchData(tableView: selectedCharComicsTableView, selectedChar: selectedChar) { results in
-            if results != nil {
-                self.fetchedComics = results!
-            }
-        }
+        fetchData()
         backButtonAdded()
         addButtonAdded()
     }
+    
     fileprivate func backButtonAdded() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "< Cancel", style: UIBarButtonItem.Style.plain, target: self, action: #selector(goBack))
     }
     @objc func goBack(){
         self.dismiss(animated: true, completion: nil)
     }
-    
-    
-
 }
 
 extension CharacterInfoVC: UITableViewDelegate, UITableViewDataSource{
@@ -61,10 +54,6 @@ extension CharacterInfoVC: UITableViewDelegate, UITableViewDataSource{
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(self.fetchedComics[indexPath.row].dates[0].date)
-    }
-    
     fileprivate func setDelegates(){
         selectedCharComicsTableView.delegate = self
         selectedCharComicsTableView.dataSource = self
@@ -85,14 +74,9 @@ extension CharacterInfoVC: UITableViewDelegate, UITableViewDataSource{
             selectedCharDescriptionLabelField.numberOfLines = 0
             
             navigationItem.title = self.selectedChar?.name
-        
         selectedCharImageView.sd_setImage(with: charImageUrl)
         }
     }
-    
-
-    
-   
     
     fileprivate func addButtonAdded(){
         navigationController?.navigationBar.topItem?.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.add, target: self, action: #selector(addButtonClicked))
@@ -111,15 +95,15 @@ extension CharacterInfoVC: UITableViewDelegate, UITableViewDataSource{
         
         do {
             try context.save()
-            print("success")
-        } catch {
-            print("error")
-        }
-        NotificationCenter.default.post(name: NSNotification.Name("newData"), object: nil)
+        } catch {}
         self.dismiss(animated: true, completion: nil)
-    
     }
     
-    
-    
+    fileprivate func fetchData(){
+        FetchComics().fetchData(tableView: selectedCharComicsTableView, selectedChar: selectedChar) { results in
+            if results != nil {
+                self.fetchedComics = results!
+            }
+        }
+    }
 }

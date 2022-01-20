@@ -10,27 +10,16 @@ import CoreData
 
 class SavedVC: UIViewController {
     @IBOutlet weak var savedCharTableView: UITableView!
-    var nameArray = [String]()
+    private var nameArray = [String]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setDelegates()
         backButtonAdded()
         getData()
-        
-
-        
     }
-    override func viewWillAppear(_ animated: Bool) {
-        NotificationCenter.default.addObserver(self, selector: #selector(getData), name: NSNotification.Name("newData"), object: nil)
-    }
-    
-    
-    
-
-
-
 }
+
 
 extension SavedVC: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -47,9 +36,11 @@ extension SavedVC: UITableViewDelegate, UITableViewDataSource{
         savedCharTableView.delegate = self
         savedCharTableView.dataSource = self
     }
+    
     fileprivate func backButtonAdded() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "< Cancel", style: UIBarButtonItem.Style.plain, target: self, action: #selector(goBack))
     }
+    
     @objc func goBack(){
         self.dismiss(animated: true, completion: nil)
     }
@@ -74,10 +65,7 @@ extension SavedVC: UITableViewDelegate, UITableViewDataSource{
                      self.savedCharTableView.reloadData()
                  }
              }
-
-         } catch {
-             print("Error")
-         }
+         } catch {}
      }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -99,24 +87,14 @@ extension SavedVC: UITableViewDelegate, UITableViewDataSource{
                                     try context.save()
                                     
                                 } catch {
-                                    print("error")
                                     break
                                 }
-                            
-                        
                     }
                 }
                 self.nameArray.remove(at: indexPath.row)
                 self.savedCharTableView.deleteRows(at: [indexPath], with: .automatic)
                 self.savedCharTableView.reloadData()
-                
-                
-            } catch {
-                
-            }
-            
+            } catch {}
         }
     }
-    
-
 }

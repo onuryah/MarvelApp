@@ -11,9 +11,9 @@ import CoreData
 
 class CharacterListVC: UIViewController {
     @IBOutlet weak var characterTableView: UITableView!
-    var fetchedCharacters = [Character]()
-    var offSetNumber = 0
-    var indexObserver = 0
+    private var fetchedCharacters = [Character]()
+    private var offSetNumber = 0
+    private var indexObserver = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,7 +50,9 @@ extension CharacterListVC : UITableViewDelegate, UITableViewDataSource, UIScroll
             offSetNumber = offSetNumber + 1
             FetchCharacters().fetchCharacters(offSetNumber: offSetNumber, tableView: characterTableView, array: fetchedCharacters) { characters in
                 if characters != nil {
-                    self.fetchedCharacters = characters!
+                    characters?.forEach({ datas in
+                        self.fetchedCharacters.append(datas)
+                    })
                 }
             }
         }
