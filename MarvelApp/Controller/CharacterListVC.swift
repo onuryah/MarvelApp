@@ -44,6 +44,7 @@ extension CharacterListVC : UITableViewDelegate, UITableViewDataSource, UIScroll
         let ex = self.fetchedCharacters[indexPath.row].thumbnail.thumbnailExtension
         let thmex = thm+"."+ex
         cell.characterImageView.sd_setImage(with: URL(string: thmex))
+        cell.characterImageView.layer.cornerRadius = 50
         self.indexObserver = indexPath.row
         
         if self.indexObserver == self.fetchedCharacters.count - 5 {
